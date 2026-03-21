@@ -376,9 +376,9 @@ const char* ny_objcs[] = {
 };
 
 const char* ny_v2[] = {
-  "comforted", "followed",  "ignored",  "watched",
-  "questioned","stabbed",   "hugged",   "kissed",
-  "punched",   "shot",      "killed",
+  "Comfort", "Follow",  "Ignore",  "Watch",
+  "Question","Stab",    "Hug",     "Kiss",
+  "Punch",   "Shoot",   "Kill",
 };
 
 
@@ -611,6 +611,11 @@ void playRevealSound() { if (M5.Speaker.isPlaying()) M5.Speaker.stop(); playWavB
 void playClearSound()  { if (M5.Speaker.isPlaying()) M5.Speaker.stop(); playWavBuf(wavClear,  wavClearSz);  }
 
 
+static const char* aOrAn(const char* word) {
+  char c = tolower((unsigned char)word[0]);
+  return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') ? "an" : "a";
+}
+
 char randChar() {
   return ALPHABET[random(ALPHA_LEN)];
 }
@@ -832,7 +837,7 @@ void wrapIntoLines(const char* text) {
       break;
     }
 
-    int cut = pos + wrapAt;
+    int cut = min(pos + wrapAt, len - 1);
     for (int i = cut; i > pos; i--) {
       if (text[i] == ' ' && (i - pos) >= 4) { cut = i; break; }
     }
@@ -848,23 +853,23 @@ void wrapIntoLines(const char* text) {
 }
 
 void generatePrescript() {
-  char buf[512] = {};
+  char buf[640] = {};
 
   switch (random(16)) {
 
     case 0:
-      strncpy(buf, singles[random(COUNT(singles))], 511);
+      strncpy(buf, singles[random(COUNT(singles))], 639);
       break;
 
     case 1:
-      snprintf(buf, 512, "%s%s%s.",
+      snprintf(buf, 640, "%s%s%s.",
         times[random(COUNT(times))],
         actions[random(COUNT(actions))],
         targets[random(COUNT(targets))]);
       break;
 
     case 2:
-      snprintf(buf, 512, "%s%s%s.%s",
+      snprintf(buf, 640, "%s%s%s.%s",
         times[random(COUNT(times))],
         actions[random(COUNT(actions))],
         targets[random(COUNT(targets))],
@@ -875,7 +880,7 @@ void generatePrescript() {
       const char* act = actions[random(COUNT(actions))];
       char cap[64]; strncpy(cap, act, 63); cap[63] = '\0';
       cap[0] = toupper((unsigned char)cap[0]);
-      snprintf(buf, 512, "%s%s.%s",
+      snprintf(buf, 640, "%s%s.%s",
         cap,
         targets[random(COUNT(targets))],
         postscripts[random(COUNT(postscripts))]);
@@ -883,7 +888,7 @@ void generatePrescript() {
     }
 
     case 4:
-      snprintf(buf, 512, "%s%s%s. %s %s%s.",
+      snprintf(buf, 640, "%s%s%s. %s %s%s.",
         times[random(COUNT(times))],
         actions[random(COUNT(actions))],
         targets[random(COUNT(targets))],
@@ -896,7 +901,7 @@ void generatePrescript() {
       const char* act = actions[random(COUNT(actions))];
       char cap[64]; strncpy(cap, act, 63); cap[63] = '\0';
       cap[0] = toupper((unsigned char)cap[0]);
-      snprintf(buf, 512, "Go to %s. %s%s.%s",
+      snprintf(buf, 640, "Go to %s. %s%s.%s",
         ny_locA[random(COUNT(ny_locA))],
         cap,
         targets[random(COUNT(targets))],
@@ -905,36 +910,44 @@ void generatePrescript() {
     }
 
     case 6:
-      snprintf(buf, 512, "Find the %s %s in %s. %s them.",
+      snprintf(buf, 640, "Find the %s %s in %s. %s them.",
         ny_pId2[random(COUNT(ny_pId2))],
         ny_pType[random(COUNT(ny_pType))],
         ny_locA[random(COUNT(ny_locA))],
         ny_v2[random(COUNT(ny_v2))]);
       break;
 
-    case 7:
-      snprintf(buf, 512, "%slook for a %s %s in %s.",
+    case 7: {
+      const char* pid = ny_pId[random(COUNT(ny_pId))];
+      snprintf(buf, 640, "%slook for %s %s %s in %s.",
         times[random(COUNT(times))],
-        ny_pId[random(COUNT(ny_pId))],
+        aOrAn(pid), pid,
         ny_pType[random(COUNT(ny_pType))],
         ny_locA[random(COUNT(ny_locA))]);
       break;
+    }
 
-    case 8:
-      snprintf(buf, 512, "Find a %s %s wearing a %s %s at %s. %s",
-        ny_pId[random(COUNT(ny_pId))],
+    case 8: {
+      const char* pid  = ny_pId[random(COUNT(ny_pId))];
+      const char* mat  = ny_mat[random(COUNT(ny_mat))];
+      const char* act2 = nc_act2[random(COUNT(nc_act2))];
+      char capAct[64]; strncpy(capAct, act2, 63); capAct[63] = '\0';
+      capAct[0] = toupper((unsigned char)capAct[0]);
+      snprintf(buf, 640, "Find %s %s %s wearing %s %s %s at %s. %s",
+        aOrAn(pid), pid,
         ny_pType[random(COUNT(ny_pType))],
-        ny_mat[random(COUNT(ny_mat))],
+        aOrAn(mat), mat,
         ny_cloth[random(COUNT(ny_cloth))],
         ny_locA[random(COUNT(ny_locA))],
-        nc_act2[random(COUNT(nc_act2))]);
+        capAct);
       break;
+    }
 
     case 9: {
       const char* act = actions[random(COUNT(actions))];
       char cap[64]; strncpy(cap, act, 63); cap[63] = '\0';
       cap[0] = toupper((unsigned char)cap[0]);
-      snprintf(buf, 512, "Bring %s. %s%s.%s",
+      snprintf(buf, 640, "Bring %s. %s%s.%s",
         ny_objcs[random(COUNT(ny_objcs))],
         cap,
         targets[random(COUNT(targets))],
@@ -943,14 +956,14 @@ void generatePrescript() {
     }
 
     case 10:
-      snprintf(buf, 512, "Play %s with %s.%s",
+      snprintf(buf, 640, "Play %s with %s.%s",
         ny_games[random(COUNT(ny_games))],
         targets[random(COUNT(targets))],
         postscripts[random(COUNT(postscripts))]);
       break;
 
     case 11:
-      snprintf(buf, 512, "%sspeak about %s with %s.%s",
+      snprintf(buf, 640, "%sspeak about %s with %s.%s",
         times[random(COUNT(times))],
         ny_topic[random(COUNT(ny_topic))],
         targets[random(COUNT(targets))],
@@ -958,27 +971,27 @@ void generatePrescript() {
       break;
 
     case 12:
-      snprintf(buf, 512, "%s%s",
+      snprintf(buf, 640, "%s%s",
         times[random(COUNT(times))],
         nc_act2[random(COUNT(nc_act2))]);
       break;
 
     case 13:
-      snprintf(buf, 512, "%s%s%s",
+      snprintf(buf, 640, "%s%s%s",
         nc_act1[random(COUNT(nc_act1))],
         nc_markers[random(COUNT(nc_markers))],
         nc_act2[random(COUNT(nc_act2))]);
       break;
 
     case 14:
-      snprintf(buf, 512, "%s%s%s",
+      snprintf(buf, 640, "%s%s%s",
         times[random(COUNT(times))],
         nc_act2[random(COUNT(nc_act2))],
         postscripts[random(COUNT(postscripts))]);
       break;
 
     default:
-      snprintf(buf, 512, "%s%s%s%s",
+      snprintf(buf, 640, "%s%s%s%s",
         nc_act1[random(COUNT(nc_act1))],
         nc_markers[random(COUNT(nc_markers))],
         nc_act2[random(COUNT(nc_act2))],
@@ -986,7 +999,7 @@ void generatePrescript() {
       break;
   }
 
-  buf[511] = '\0';
+  buf[639] = '\0';
   wrapIntoLines(buf);
 
   if (lineCount == 0) {
