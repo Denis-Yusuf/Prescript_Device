@@ -8,9 +8,12 @@ extern "C" {
 #include <Preferences.h>
 #include <LittleFS.h>
 
+// ── Configuration ────────────────────────────────────────────────────────────
+
 #define COUNT(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
-// fallback timing — replaced at boot once we know the actual WAV duration
+// Fallback animation timing — overwritten at boot once we know the reveal WAV's
+// actual duration. If the file is missing, these values are used instead.
 uint32_t SPIN_MS   = 600;
 uint32_t REVEAL_MS = 3900;
 uint32_t ANIM_MS   = 4500;
@@ -31,14 +34,14 @@ const uint8_t BRIGHTNESS = 10;
 // HIGH = stay on, LOW = cut power (self-latch circuit)
 const int     PIN_HOLD   = 4;
 
-const char* USER_NAME  = "Proxy Denis";
-const char* SLEEP_TEXT = "2.718281";
+const char* const USER_NAME  = "Proxy Denis";
+const char* const SLEEP_TEXT = "2.718281";
 
 // dark teal (~#1A3535 in RGB565)
 const uint16_t COL_BG   = 0x19A6;
 const uint16_t COL_TEXT = TFT_WHITE;
 
-const char* ALPHABET =
+const char* const ALPHABET =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
   "abcdefghijklmnopqrstuvwxyz"
   "0123456789"
@@ -46,7 +49,11 @@ const char* ALPHABET =
 const int ALPHA_LEN = 26 + 26 + 10 + 22;
 
 
-const char* singles[] = {
+// ── Word Pools ────────────────────────────────────────────────────────────────
+// All arrays are const char* const so the pointer tables live in flash (read-only).
+// Heap corruption cannot silently overwrite them — any stray write faults immediately.
+
+const char* const singles[] = {
   "Play rock paper scissors with the next person you meet. If you lose, tell them something true.",
   "Count every door you pass through today. At the last one, pause.",
   "Write your name on something that will not hold it for long.",
@@ -154,7 +161,7 @@ const char* singles[] = {
   "Tell your nearest neighbor about the future. Ensure it comes to pass.",
 };
 
-const char* times[] = {
+const char* const times[] = {
   "Tomorrow, ",          "By midnight, ",       "Within 3 hours, ",
   "Before dawn, ",       "At noon, ",           "This evening, ",
   "Before you sleep, ",  "Immediately, ",       "By the next dawn, ",
@@ -183,7 +190,7 @@ const char* times[] = {
   "Next Monday, ",
 };
 
-const char* actions[] = {
+const char* const actions[] = {
   "speak to ",            "give something to ",   "observe ",
   "make something for ",  "listen to ",           "offer your name to ",
   "share a meal with ",   "ask one question of ", "walk alongside ",
@@ -200,7 +207,7 @@ const char* actions[] = {
   "send a love letter to ",            "send a handwritten confession letter to ",
 };
 
-const char* targets[] = {
+const char* const targets[] = {
   "a stranger",                  "someone you trust",          "your closest friend",
   "yourself",                    "the next person who speaks to you",
   "someone who owes you nothing","an old acquaintance",
@@ -232,7 +239,7 @@ const char* targets[] = {
   "your dreams",
 };
 
-const char* postscripts[] = {
+const char* const postscripts[] = {
   " Do not explain yourself.",      " Ask for nothing in return.",
   " Do not speak of it again.",     " Keep no record of it.",
   " Forget it by tomorrow.",        " Remember it exactly.",
@@ -262,10 +269,10 @@ const char* postscripts[] = {
   " Once you're done, drink a cup of sewage.",
 };
 
-const char* transitions[] = { "Then,", "Afterward,", "After that," };
+const char* const transitions[] = { "Then,", "Afterward,", "After that," };
 
 
-const char* ny_locA[] = {
+const char* const ny_locA[] = {
   "the beach",                           "a store",
   "a house",                             "an apartment complex",
   "the ocean",                           "a hotel",
@@ -290,7 +297,7 @@ const char* ny_locA[] = {
   "a murky alleyway",                    "your workplace",
 };
 
-const char* ny_pId[] = {
+const char* const ny_pId[] = {
   "ugly",              "beautiful",     "handsome",      "cute",
   "pretty",            "plain",         "attractive",    "unattractive",
   "sexually-attractive","young",        "old",           "middle-aged",
@@ -304,7 +311,7 @@ const char* ny_pId[] = {
   "sickly",
 };
 
-const char* ny_pId2[] = {
+const char* const ny_pId2[] = {
   "ugliest",         "prettiest",        "handsomest",       "cutest",
   "creepiest",       "kindest",          "meanest",          "cruelest",
   "warmest",         "smartest",         "dumbest",          "wisest",
@@ -315,7 +322,7 @@ const char* ny_pId2[] = {
   "most-unstoppable",
 };
 
-const char* ny_pType[] = {
+const char* const ny_pType[] = {
   "person",       "stranger",     "child",        "teenager",
   "adult",        "elder",        "neighbor",     "family member",
   "sibling",      "parent",       "teacher",      "student",
@@ -325,7 +332,7 @@ const char* ny_pType[] = {
   "Syndicate member",
 };
 
-const char* ny_cloth[] = {
+const char* const ny_cloth[] = {
   "hat",    "cap",     "hood",    "hoodie",
   "cloak",  "coat",    "jacket",  "vest",
   "shirt",  "t-shirt", "dress",   "pants",
@@ -333,7 +340,7 @@ const char* ny_cloth[] = {
   "uniform",
 };
 
-const char* ny_mat[] = {
+const char* const ny_mat[] = {
   "cloth",    "leather",    "wool",    "cotton",
   "silk",     "velvet",     "new",     "old",
   "worn",     "torn",       "ripped",  "clean",
@@ -345,7 +352,7 @@ const char* ny_mat[] = {
   "scarlet",
 };
 
-const char* ny_topic[] = {
+const char* const ny_topic[] = {
   "love",       "life",         "death",       "fear",
   "regret",     "hope",         "loneliness",  "trust",
   "guilt",      "desire",       "memories",    "dreams",
@@ -355,7 +362,7 @@ const char* ny_topic[] = {
   "friendship", "violence",     "the Fixers",  "who you really are",
 };
 
-const char* ny_games[] = {
+const char* const ny_games[] = {
   "Patty Cake",                   "Never Have I Ever",
   "Tag",                          "Hide and Seek",
   "Chess",                        "Dominoes",
@@ -364,7 +371,7 @@ const char* ny_games[] = {
   "a game that doesn't end",
 };
 
-const char* ny_objcs[] = {
+const char* const ny_objcs[] = {
   "pen and paper",  "apples",           "an empty bottle",
   "duct tape",      "charcoal",         "a wooden chair",
   "dice",           "a key",            "a backpack",
@@ -375,14 +382,14 @@ const char* ny_objcs[] = {
   "a candle",       "a matchbox",
 };
 
-const char* ny_v2[] = {
+const char* const ny_v2[] = {
   "Comfort", "Follow",  "Ignore",  "Watch",
   "Question","Stab",    "Hug",     "Kiss",
   "Punch",   "Shoot",   "Kill",
 };
 
 
-const char* nc_act2[] = {
+const char* const nc_act2[] = {
   "eat bitter.",
   "jump from a roof. The height does not matter.",
   "jump from a roof. It must be at least 30 meters tall.",
@@ -448,7 +455,7 @@ const char* nc_act2[] = {
   "board a WARP train with your nearest coworker.",
 };
 
-const char* nc_act1[] = {
+const char* const nc_act1[] = {
   "Fix your posture, ",
   "Forget your own reflection, ",
   "Take a selfie, ",
@@ -494,7 +501,7 @@ const char* nc_act1[] = {
   "Bring the head of your nearest neighbor to a total stranger, ",
 };
 
-const char* nc_markers[] = {
+const char* const nc_markers[] = {
   "then ",
   "and immediately afterwards, ",
   "but before you do that, ",
@@ -506,7 +513,10 @@ const char* nc_markers[] = {
 };
 
 
+// ── Runtime State ────────────────────────────────────────────────────────────
+
 M5Canvas   canvas(&M5.Display);
+M5Canvas   bootCanvas(&M5.Display);
 Preferences prefs;
 
 enum class Mode { BOOT, ANIMATING, READING, CLEARING, CLEARING_HOLD, MESSAGE, STATUS, STATUS_HOLD, SLEEPING };
@@ -535,8 +545,21 @@ uint8_t* wavClear    = nullptr;
 size_t   wavClearSz  = 0;
 uint8_t* bootImgBuf  = nullptr;
 size_t   bootImgSz   = 0;
+bool     bootCanvasReady = false;
 
 
+// ── Audio ─────────────────────────────────────────────────────────────────────
+
+/**
+ * @brief Reads an entire file from LittleFS into a freshly allocated buffer.
+ *
+ * On success, `*buf` and `*sz` are set to the allocation and its byte count.
+ * On any failure (missing file, empty file, out of memory) both are left untouched.
+ *
+ * @param path  LittleFS path, e.g. "/index_message_1.wav".
+ * @param buf   Receives the address of the allocated buffer.
+ * @param sz    Receives the number of bytes read.
+ */
 static void loadWav(const char* path, uint8_t** buf, size_t* sz) {
   File f = LittleFS.open(path);
   if (!f || f.isDirectory()) return;
@@ -552,6 +575,15 @@ static void loadWav(const char* path, uint8_t** buf, size_t* sz) {
 }
 
 // IHDR width/height sit at bytes 16–23, big-endian
+/**
+ * @brief Reads width and height from a PNG file's IHDR chunk.
+ *
+ * @param buf  Buffer containing the raw PNG data.
+ * @param sz   Size of the buffer in bytes.
+ * @param w    Output — PNG image width in pixels.
+ * @param h    Output — PNG image height in pixels.
+ * @return `true` if the buffer looks like a valid PNG with non-zero dimensions.
+ */
 static bool getPngSize(const uint8_t* buf, size_t sz, uint32_t* w, uint32_t* h) {
   if (sz < 24 || memcmp(buf, "\x89PNG\r\n\x1a\n", 8) != 0) return false;
   *w = ((uint32_t)buf[16] << 24) | ((uint32_t)buf[17] << 16) | ((uint32_t)buf[18] << 8) | buf[19];
@@ -559,9 +591,21 @@ static bool getPngSize(const uint8_t* buf, size_t sz, uint32_t* w, uint32_t* h) 
   return (*w > 0 && *h > 0);
 }
 
-// Finds the raw PCM data inside a WAV buffer and returns a pointer to it.
-// Rejects anything that isn't uncompressed PCM (format code 1) — other formats
-// would make the duration math wrong.
+/**
+ * @brief Parses a minimal WAV header and locates the PCM data chunk.
+ *
+ * Validates the RIFF/WAVE/fmt structure and walks sub-chunks to find "data".
+ * Only uncompressed PCM (audiofmt == 1), 8- or 16-bit, mono or stereo is accepted.
+ *
+ * @param buf     Raw WAV file bytes.
+ * @param sz      Size of `buf` in bytes.
+ * @param pcm     Output — pointer into `buf` where PCM samples begin.
+ * @param pcmLen  Output — number of bytes of PCM data.
+ * @param sr      Output — sample rate in Hz.
+ * @param ch      Output — channel count (1 = mono, 2 = stereo).
+ * @param bps     Output — bits per sample (8 or 16).
+ * @return `true` if a valid PCM data chunk was found.
+ */
 static bool parseWavHeader(const uint8_t* buf, size_t sz,
                             const uint8_t** pcmOut, size_t* pcmLen,
                             uint32_t* sampleRate, uint8_t* channels, uint8_t* bitsPerSample) {
@@ -589,6 +633,15 @@ static bool parseWavHeader(const uint8_t* buf, size_t sz,
   return false;
 }
 
+/**
+ * @brief Parses a WAV buffer and queues it for playback on the speaker.
+ *
+ * Does nothing if `buf` is null, `sz` is zero, or the buffer does not contain
+ * valid uncompressed PCM audio.
+ *
+ * @param buf  Raw WAV file bytes.
+ * @param sz   Size of `buf` in bytes.
+ */
 static void playWavBuf(const uint8_t* buf, size_t sz) {
   if (!buf || sz == 0) return;
   const uint8_t* pcm;
@@ -603,74 +656,123 @@ static void playWavBuf(const uint8_t* buf, size_t sz) {
     M5.Speaker.playRaw((const int8_t*)pcm, pcmLen, sr, stereo, 1.0f, 0);
 }
 
-// Only stop() if something is actually playing. Calling stop() on a silent speaker
-// still pokes the AXP2101 and fires a spurious BtnPWR event. But we do need stop()
-// when the channel is busy — playRaw busy-waits without yielding, so if the leftover
-// audio is longer than the ESP32's task watchdog (~5 s) the device will reset.
+// Only stop() when something is actually playing — calling stop() on a silent speaker
+// still pokes the AXP2101 and fires a spurious BtnPWR event. We do need to stop when
+// a sound is already running though, because playRaw busy-waits; if the leftover audio
+// outlasts the task watchdog (~5 s) the device resets.
+
+/** @brief Plays the prescript reveal sound. Stops any in-progress audio first. */
 void playRevealSound() { if (M5.Speaker.isPlaying()) M5.Speaker.stop(); playWavBuf(wavReveal, wavRevealSz); }
+
+/** @brief Plays the clear-confirmation sound. Stops any in-progress audio first. */
 void playClearSound()  { if (M5.Speaker.isPlaying()) M5.Speaker.stop(); playWavBuf(wavClear,  wavClearSz);  }
 
 
+// ── Utilities ─────────────────────────────────────────────────────────────────
+
+/**
+ * @brief Returns "a" or "an" as the correct indefinite article for the given word.
+ * @param word The word that follows the article.
+ * @return "an" if `word` starts with a vowel, "a" otherwise.
+ */
 static const char* aOrAn(const char* word) {
   char c = tolower((unsigned char)word[0]);
   return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') ? "an" : "a";
 }
 
+/**
+ * @brief Returns a single random character from `ALPHABET`.
+ * @return A random printable character used during the scramble animation.
+ */
 char randChar() {
   return ALPHABET[random(ALPHA_LEN)];
 }
 
+/**
+ * @brief Estimates battery charge level from the measured cell voltage.
+ *
+ * Uses a piecewise-linear interpolation table that maps known LiPo discharge
+ * voltages to approximate percentages. The AXP2101 reports millivolts when
+ * the raw reading is > 10, so that case is normalised to volts first.
+ *
+ * @return Battery percentage, clamped to [0, 100].
+ */
 int batteryPercent() {
-  float v = (float)M5.Power.getBatteryVoltage();
-  if (v > 10.0f) v /= 1000.0f;
-  if (v >= 4.20f) return 100;
-  if (v <= 3.30f) return 0;
+  float voltage = (float)M5.Power.getBatteryVoltage();
+  if (voltage > 10.0f) voltage /= 1000.0f;
+  if (voltage >= 4.20f) return 100;
+  if (voltage <= 3.30f) return 0;
 
-  const float V[] = { 4.20f, 4.10f, 4.00f, 3.90f, 3.80f, 3.70f, 3.60f, 3.50f, 3.30f };
-  const int   P[] = { 100,   90,    80,    65,    45,    25,    10,     3,     0    };
+  const float voltageTable[] = { 4.20f, 4.10f, 4.00f, 3.90f, 3.80f, 3.70f, 3.60f, 3.50f, 3.30f };
+  const int   percentTable[] = { 100,   90,    80,    65,    45,    25,    10,     3,     0    };
   for (int i = 0; i < 8; i++) {
-    if (v <= V[i] && v >= V[i+1]) {
-      float t = (v - V[i+1]) / (V[i] - V[i+1]);
-      return constrain((int)lroundf(P[i+1] + t * (P[i] - P[i+1])), 0, 100);
+    if (voltage <= voltageTable[i] && voltage >= voltageTable[i+1]) {
+      float lerpFrac = (voltage - voltageTable[i+1]) / (voltageTable[i] - voltageTable[i+1]);
+      return constrain((int)lroundf(percentTable[i+1] + lerpFrac * (percentTable[i] - percentTable[i+1])), 0, 100);
     }
   }
   return 0;
 }
 
 
+// ── Drawing ───────────────────────────────────────────────────────────────────
+
+/**
+ * @brief Finds the largest integer text size at which a single string fits on screen.
+ *
+ * @param s      The string to measure.
+ * @param maxSz  Maximum text size to try.
+ * @param margin Pixel margin to subtract from each edge before fitting.
+ * @return Largest text size (1-based) at which the string still fits.
+ */
 int fitSize(const char* s, int maxSz, int margin) {
-  int wMax = M5.Display.width()  - 2 * margin;
-  int hMax = M5.Display.height() - 2 * margin;
+  int maxWidth  = M5.Display.width()  - 2 * margin;
+  int maxHeight = M5.Display.height() - 2 * margin;
   canvas.setTextFont(1);
-  int best = 1;
-  for (int sz = 1; sz <= maxSz; sz++) {
-    canvas.setTextSize(sz);
-    if (canvas.textWidth(s) <= wMax && canvas.fontHeight() <= hMax) best = sz;
+  int bestFit = 1;
+  for (int fontSize = 1; fontSize <= maxSz; fontSize++) {
+    canvas.setTextSize(fontSize);
+    if (canvas.textWidth(s) <= maxWidth && canvas.fontHeight() <= maxHeight) bestFit = fontSize;
     else break;
   }
-  return best;
+  return bestFit;
 }
 
+/**
+ * @brief Finds the largest integer text size at which all lines of a block fit on screen.
+ *
+ * @param lines  Array of strings to measure.
+ * @param n      Number of lines.
+ * @param maxSz  Maximum text size to try.
+ * @param margin Pixel margin to subtract from each edge before fitting.
+ * @return Largest text size (1-based) at which every line still fits.
+ */
 int fitSizeLines(const char* const* lines, int n, int maxSz, int margin) {
-  int wMax = M5.Display.width()  - 2 * margin;
-  int hMax = M5.Display.height() - 2 * margin;
+  int maxWidth  = M5.Display.width()  - 2 * margin;
+  int maxHeight = M5.Display.height() - 2 * margin;
   canvas.setTextFont(1);
-  int best = 1;
-  for (int sz = 1; sz <= maxSz; sz++) {
-    canvas.setTextSize(sz);
-    int maxW = 0;
+  int bestFit = 1;
+  for (int fontSize = 1; fontSize <= maxSz; fontSize++) {
+    canvas.setTextSize(fontSize);
+    int widestLine = 0;
     for (int i = 0; i < n; i++) {
-      int w = canvas.textWidth(lines[i]);
-      if (w > maxW) maxW = w;
+      int lineWidth = canvas.textWidth(lines[i]);
+      if (lineWidth > widestLine) widestLine = lineWidth;
     }
-    int totalH = n * canvas.fontHeight() + (n - 1) * LINE_GAP;
-    if (maxW <= wMax && totalH <= hMax) best = sz;
+    int totalHeight = n * canvas.fontHeight() + (n - 1) * LINE_GAP;
+    if (widestLine <= maxWidth && totalHeight <= maxHeight) bestFit = fontSize;
     else break;
   }
-  return best;
+  return bestFit;
 }
 
 
+/**
+ * @brief Renders a single string centred on the canvas and pushes it to the display.
+ *
+ * @param s     The string to render.
+ * @param color Text colour in RGB565.
+ */
 void drawSingle(const char* s, uint32_t color) {
   canvas.fillScreen(COL_BG);
   canvas.setTextFont(1);
@@ -681,134 +783,213 @@ void drawSingle(const char* s, uint32_t color) {
   canvas.pushSprite(0, 0);
 }
 
+/**
+ * @brief Draws the BOOT waiting screen: logo image centred above a prompt string.
+ *
+ * The logo is scaled to fill as much of the vertical space as possible while
+ * keeping it square. The prompt is rendered with a faux glow by drawing it in
+ * blue at small offsets before drawing it in white on top.
+ */
 void drawBootScreen() {
-  const char* text = "- Click to Receive -";
-  uint32_t glowCol = canvas.color565(66, 105, 184);
-  int w = M5.Display.width();
-  int h = M5.Display.height();
+  const char* promptText = "- Click to Receive -";
+  uint32_t glowColor = canvas.color565(66, 105, 184);
+  int dispWidth  = M5.Display.width();
+  int dispHeight = M5.Display.height();
 
   canvas.fillScreen(COL_BG);
 
   canvas.setTextFont(1);
-  int sz = fitSize(text, 6, 4);
-  canvas.setTextSize(sz);
-  int textH = canvas.fontHeight();
+  int fontSize   = fitSize(promptText, 6, 4);
+  canvas.setTextSize(fontSize);
+  int textHeight = canvas.fontHeight();
 
   const int GAP = 3;
 
-  int imgSize = h - textH - GAP - 4;
-  if (imgSize > w) imgSize = w;
+  int imageSize = dispHeight - textHeight - GAP - 4;
+  if (imageSize > dispWidth) imageSize = dispWidth;
 
-  int totalH  = imgSize + GAP + textH;
-  int startY  = (h - totalH) / 2;
-  int imgX    = (w - imgSize) / 2;
-  int imgY    = startY;
-  int textCY  = startY + imgSize + GAP + textH / 2;
+  int totalContentHeight = imageSize + GAP + textHeight;
+  int startY             = (dispHeight - totalContentHeight) / 2;
+  int imageX             = (dispWidth - imageSize) / 2;
+  int imageY             = startY;
+  int textCenterY        = startY + imageSize + GAP + textHeight / 2;
 
   if (bootImgBuf && bootImgSz > 0) {
-    uint32_t pngW = imgSize, pngH = imgSize;
-    getPngSize(bootImgBuf, bootImgSz, &pngW, &pngH);
+    uint32_t pngWidth = imageSize, pngHeight = imageSize;
+    getPngSize(bootImgBuf, bootImgSz, &pngWidth, &pngHeight);
     // drawPng won't scale for us, so we do it manually
-    float scale = (float)imgSize / (float)(pngW > pngH ? pngW : pngH);
-    int scaledW = (int)(pngW * scale);
-    int scaledH = (int)(pngH * scale);
-    int drawX = imgX + (imgSize - scaledW) / 2;
-    int drawY = imgY + (imgSize - scaledH) / 2;
-    canvas.drawPng(bootImgBuf, bootImgSz, drawX, drawY, 0, 0, 0, 0, scale, scale);
+    float imageScale  = (float)imageSize / (float)(pngWidth > pngHeight ? pngWidth : pngHeight);
+    int scaledWidth   = (int)(pngWidth  * imageScale);
+    int scaledHeight  = (int)(pngHeight * imageScale);
+    int drawPosX      = imageX + (imageSize - scaledWidth)  / 2;
+    int drawPosY      = imageY + (imageSize - scaledHeight) / 2;
+    canvas.drawPng(bootImgBuf, bootImgSz, drawPosX, drawPosY, 0, 0, 0, 0, imageScale, imageScale);
   }
 
   canvas.setTextDatum(middle_center);
 
   // draw the same text slightly offset in blue first, white on top — fakes a glow
-  canvas.setTextColor(glowCol);
-  for (int dx = -2; dx <= 2; dx++)
-    for (int dy = -2; dy <= 2; dy++)
-      if (dx != 0 || dy != 0)
-        canvas.drawString(text, w / 2 + dx, textCY + dy);
+  canvas.setTextColor(glowColor);
+  for (int offsetX = -2; offsetX <= 2; offsetX++)
+    for (int offsetY = -2; offsetY <= 2; offsetY++)
+      if (offsetX != 0 || offsetY != 0)
+        canvas.drawString(promptText, dispWidth / 2 + offsetX, textCenterY + offsetY);
 
   canvas.setTextColor(TFT_WHITE);
-  canvas.drawString(text, w / 2, textCY);
+  canvas.drawString(promptText, dispWidth / 2, textCenterY);
   canvas.pushSprite(0, 0);
 }
 
+/**
+ * @brief Renders an array of strings vertically centred on the canvas.
+ *
+ * The largest text size that fits all lines within the given margin is chosen
+ * automatically.
+ *
+ * @param lines  Array of strings to draw.
+ * @param n      Number of lines.
+ * @param color  Text colour in RGB565.
+ * @param maxSz  Maximum text size to consider.
+ * @param margin Pixel margin from each edge.
+ */
 void drawMultiLine(const char* const* lines, int n, uint32_t color, int maxSz, int margin) {
   canvas.fillScreen(COL_BG);
   canvas.setTextFont(1);
   canvas.setTextColor(color);
   canvas.setTextDatum(top_center);
   canvas.setTextSize(fitSizeLines(lines, n, maxSz, margin));
-  int fh = canvas.fontHeight();
-  int y  = (M5.Display.height() - (n * fh + (n - 1) * LINE_GAP)) / 2;
+  int fontHeight = canvas.fontHeight();
+  int startY     = (M5.Display.height() - (n * fontHeight + (n - 1) * LINE_GAP)) / 2;
   for (int i = 0; i < n; i++)
-    canvas.drawString(lines[i], M5.Display.width() / 2, y + i * (fh + LINE_GAP));
+    canvas.drawString(lines[i], M5.Display.width() / 2, startY + i * (fontHeight + LINE_GAP));
   canvas.pushSprite(0, 0);
 }
 
+/**
+ * @brief Draws a wrapped prescript text block on screen.
+ * @param lines  Wrapped lines from `wrapIntoLines()`.
+ * @param n      Number of lines.
+ * @param color  Text colour in RGB565.
+ */
 void drawPrescript(const char* const* lines, int n, uint32_t color) {
   drawMultiLine(lines, n, color, 10, 4);
 }
 
+/**
+ * @brief Draws the status screen text block (battery, name, clear count).
+ * @param lines  Array of status strings.
+ * @param n      Number of lines.
+ * @param color  Text colour in RGB565.
+ */
 void drawStatus(const char* const* lines, int n, uint32_t color) {
   drawMultiLine(lines, n, color, 18, 0);
 }
 
 
+// ── Animation ─────────────────────────────────────────────────────────────────
+
+/**
+ * @brief Animates a single-string scramble-then-reveal effect for one frame.
+ *
+ * During the spin phase every character is replaced with a random glyph.
+ * After the spin phase characters are progressively revealed left-to-right
+ * over `reveal_ms` milliseconds.
+ *
+ * @param finalStr  The target string to reveal.
+ * @param color     Text colour in RGB565.
+ * @param spin_ms   Duration of the full-scramble spin phase (ms).
+ * @param reveal_ms Duration of the left-to-right reveal phase (ms).
+ */
 void animateSingle(const char* finalStr, uint32_t color,
                    uint32_t spin_ms = SPIN_MS, uint32_t reveal_ms = REVEAL_MS) {
   if (reveal_ms == 0) reveal_ms = 1;
   uint32_t elapsed = millis() - stateStart;
-  int len = (int)strlen(finalStr);
-  if (len > 63) len = 63;
+  int textLen = (int)strlen(finalStr);
+  if (textLen > 63) textLen = 63;
   char buf[64];
 
   if (elapsed < spin_ms) {
-    for (int i = 0; i < len; i++) buf[i] = randChar();
+    for (int i = 0; i < textLen; i++) buf[i] = randChar();
   } else {
-    uint32_t prog = min(elapsed - spin_ms, reveal_ms);
+    uint32_t revealProgress = min(elapsed - spin_ms, reveal_ms);
     // uint64_t keeps this from overflowing on long strings
-    int revealed  = constrain((int)((uint64_t)prog * len / reveal_ms), 0, len);
-    for (int i = 0; i < len; i++)
-      buf[i] = (i < revealed) ? finalStr[i] : randChar();
+    int revealedChars = constrain((int)((uint64_t)revealProgress * textLen / reveal_ms), 0, textLen);
+    for (int i = 0; i < textLen; i++)
+      buf[i] = (i < revealedChars) ? finalStr[i] : randChar();
   }
-  buf[len] = '\0';
+  buf[textLen] = '\0';
   drawSingle(buf, color);
 }
 
+/**
+ * @brief Animates a multi-line scramble-then-reveal effect for one frame.
+ *
+ * All rows animate in sync: random glyphs during the spin phase, then a
+ * simultaneous left-to-right reveal across every line.
+ *
+ * @param finalLines Target strings (one per line).
+ * @param n          Number of lines in `finalLines`.
+ * @param color      Text colour in RGB565.
+ * @param drawFn     Drawing function to call with the animated frame.
+ * @param cap        Maximum number of lines to animate (capped to `MAX_LINES`).
+ * @param spin_ms    Duration of the full-scramble spin phase (ms).
+ * @param reveal_ms  Duration of the left-to-right reveal phase (ms).
+ */
 void animateMultiLine(const char* const* finalLines, int n, uint32_t color,
                       void (*drawFn)(const char* const*, int, uint32_t), int cap,
                       uint32_t spin_ms = SPIN_MS, uint32_t reveal_ms = REVEAL_MS) {
   uint32_t elapsed = millis() - stateStart;
-  int rows = min(n, cap);
+  int rowCount = min(n, cap);
 
   static char anim[MAX_LINES][64];
   const char* ptrs[MAX_LINES];
-  for (int i = 0; i < rows; i++) ptrs[i] = anim[i];
+  for (int i = 0; i < rowCount; i++) ptrs[i] = anim[i];
 
-  uint32_t rev_ms = (reveal_ms > 0) ? reveal_ms : 1;
-  uint32_t prog = (elapsed >= spin_ms) ? min(elapsed - spin_ms, rev_ms) : 0;
+  uint32_t revealMs       = (reveal_ms > 0) ? reveal_ms : 1;
+  uint32_t revealProgress = (elapsed >= spin_ms) ? min(elapsed - spin_ms, revealMs) : 0;
 
-  for (int r = 0; r < rows; r++) {
-    int len = (int)strlen(finalLines[r]);
-    if (len > 63) len = 63;
+  for (int row = 0; row < rowCount; row++) {
+    int lineLen = (int)strlen(finalLines[row]);
+    if (lineLen > 63) lineLen = 63;
     // uint64_t keeps this from overflowing on long strings
-    int revealed = (elapsed < spin_ms)
+    int revealedChars = (elapsed < spin_ms)
       ? 0
-      : constrain((int)((uint64_t)prog * len / rev_ms), 0, len);
-    for (int c = 0; c < len; c++)
-      anim[r][c] = (c < revealed) ? finalLines[r][c] : randChar();
-    anim[r][len] = '\0';
+      : constrain((int)((uint64_t)revealProgress * lineLen / revealMs), 0, lineLen);
+    for (int col = 0; col < lineLen; col++)
+      anim[row][col] = (col < revealedChars) ? finalLines[row][col] : randChar();
+    anim[row][lineLen] = '\0';
   }
-  drawFn(ptrs, rows, color);
+  drawFn(ptrs, rowCount, color);
 }
 
+/**
+ * @brief Animates a prescript reveal for one frame using the prescript draw function.
+ * @param lines  Wrapped prescript lines.
+ * @param n      Number of lines.
+ * @param color  Text colour in RGB565.
+ */
 void animatePrescript(const char* const* lines, int n, uint32_t color) {
   animateMultiLine(lines, n, color, drawPrescript, MAX_LINES);
 }
 
+/**
+ * @brief Animates a status screen reveal for one frame using the status draw function.
+ * @param lines  Status screen lines.
+ * @param n      Number of lines.
+ * @param color  Text colour in RGB565.
+ */
 void animateStatus(const char* const* lines, int n, uint32_t color) {
   animateMultiLine(lines, n, color, drawStatus, 4, MSG_SPIN_MS, MSG_REVEAL_MS);
 }
 
+// ── State Management ──────────────────────────────────────────────────────────
+
+/**
+ * @brief Persists state, blanks the display, and cuts power via the self-latch pin.
+ *
+ * Once GPIO 4 (PIN_HOLD) goes LOW the self-latch circuit cuts power. The
+ * infinite loop afterwards is a safety net in case the circuit delays.
+ */
 void powerOff() {
   prefs.putULong("totalClear", totalClear);
   M5.Display.fillScreen(TFT_BLACK);
@@ -819,76 +1000,95 @@ void powerOff() {
 }
 
 
+// ── Prescript Generation ──────────────────────────────────────────────────────
+
+/**
+ * @brief Breaks a flat prescript string into display lines and populates `prescriptPtrs`.
+ *
+ * Targets approximately 7 lines so the auto-fit font size stays consistent
+ * regardless of text length. Words are never split; the algorithm finds the
+ * nearest space at or before the target column and breaks there.
+ *
+ * @param text Null-terminated prescript string to wrap.
+ */
 void wrapIntoLines(const char* text) {
   lineCount = 0;
-  int len = strlen(text);
-  int pos = 0;
+  int textLen = strlen(text);
+  int cursor  = 0;
 
   // aim for ~7 lines so the font size stays consistent regardless of text length
-  int wrapAt = constrain(len / 7, 15, 35);
+  int targetLineLen = constrain(textLen / 7, 15, 35);
 
-  while (pos < len && lineCount < MAX_LINES) {
-    while (pos < len && text[pos] == ' ') pos++;
-    if (pos >= len) break;
+  while (cursor < textLen && lineCount < MAX_LINES) {
+    while (cursor < textLen && text[cursor] == ' ') cursor++;
+    if (cursor >= textLen) break;
 
-    if (len - pos <= wrapAt) {
-      strncpy(prescriptLines[lineCount], text + pos, 63);
+    if (textLen - cursor <= targetLineLen) {
+      strncpy(prescriptLines[lineCount], text + cursor, 63);
       prescriptLines[lineCount++][63] = '\0';
       break;
     }
 
-    int cut = min(pos + wrapAt, len - 1);
-    for (int i = cut; i > pos; i--) {
-      if (text[i] == ' ' && (i - pos) >= 4) { cut = i; break; }
+    int breakPos = min(cursor + targetLineLen, textLen - 1);
+    for (int i = breakPos; i > cursor; i--) {
+      if (text[i] == ' ' && (i - cursor) >= 4) { breakPos = i; break; }
     }
 
-    int chunk = constrain(cut - pos, 0, 63);
-    strncpy(prescriptLines[lineCount], text + pos, chunk);
-    prescriptLines[lineCount++][chunk] = '\0';
-    pos = cut;
+    int copyLen = constrain(breakPos - cursor, 0, 63);
+    strncpy(prescriptLines[lineCount], text + cursor, copyLen);
+    prescriptLines[lineCount++][copyLen] = '\0';
+    cursor = breakPos;
   }
 
   for (int i = 0; i < lineCount; i++)
     prescriptPtrs[i] = prescriptLines[i];
 }
 
+/**
+ * @brief Picks a random structural template, fills word slots, and wraps the result.
+ *
+ * One of 16 templates is selected at random. Each template pulls words from the
+ * global const arrays (times, actions, targets, etc.). The resulting string is
+ * passed to `wrapIntoLines()`, which populates `prescriptPtrs` and `lineCount`.
+ * Falls back to "..." if the result is somehow empty.
+ */
 void generatePrescript() {
-  char buf[640] = {};
+  char text[640] = {};
 
   switch (random(16)) {
 
-    case 0:
-      strncpy(buf, singles[random(COUNT(singles))], 639);
+    case 0:  // standalone — one complete prescript picked from the singles list
+      strncpy(text, singles[random(COUNT(singles))], 639);
       break;
 
-    case 1:
-      snprintf(buf, 640, "%s%s%s.",
+    case 1:  // [time] [action] [target].
+      snprintf(text, 640, "%s%s%s.",
         times[random(COUNT(times))],
         actions[random(COUNT(actions))],
         targets[random(COUNT(targets))]);
       break;
 
-    case 2:
-      snprintf(buf, 640, "%s%s%s.%s",
+    case 2:  // [time] [action] [target]. [postscript]
+      snprintf(text, 640, "%s%s%s.%s",
         times[random(COUNT(times))],
         actions[random(COUNT(actions))],
         targets[random(COUNT(targets))],
         postscripts[random(COUNT(postscripts))]);
       break;
 
-    case 3: {
-      const char* act = actions[random(COUNT(actions))];
-      char cap[64]; strncpy(cap, act, 63); cap[63] = '\0';
-      cap[0] = toupper((unsigned char)cap[0]);
-      snprintf(buf, 640, "%s%s.%s",
-        cap,
+    case 3: {  // [Action] [target]. [postscript]  (capitalised verb, no time prefix)
+      const char* action = actions[random(COUNT(actions))];
+      char capitalisedAction[64]; strncpy(capitalisedAction, action, 63); capitalisedAction[63] = '\0';
+      capitalisedAction[0] = toupper((unsigned char)capitalisedAction[0]);
+      snprintf(text, 640, "%s%s.%s",
+        capitalisedAction,
         targets[random(COUNT(targets))],
         postscripts[random(COUNT(postscripts))]);
       break;
     }
 
-    case 4:
-      snprintf(buf, 640, "%s%s%s. %s %s%s.",
+    case 4:  // [time] [action] [target]. [transition], [action] [target].
+      snprintf(text, 640, "%s%s%s. %s %s%s.",
         times[random(COUNT(times))],
         actions[random(COUNT(actions))],
         targets[random(COUNT(targets))],
@@ -897,101 +1097,101 @@ void generatePrescript() {
         targets[random(COUNT(targets))]);
       break;
 
-    case 5: {
-      const char* act = actions[random(COUNT(actions))];
-      char cap[64]; strncpy(cap, act, 63); cap[63] = '\0';
-      cap[0] = toupper((unsigned char)cap[0]);
-      snprintf(buf, 640, "Go to %s. %s%s.%s",
+    case 5: {  // Go to [location]. [Action] [target]. [postscript]
+      const char* action = actions[random(COUNT(actions))];
+      char capitalisedAction[64]; strncpy(capitalisedAction, action, 63); capitalisedAction[63] = '\0';
+      capitalisedAction[0] = toupper((unsigned char)capitalisedAction[0]);
+      snprintf(text, 640, "Go to %s. %s%s.%s",
         ny_locA[random(COUNT(ny_locA))],
-        cap,
+        capitalisedAction,
         targets[random(COUNT(targets))],
         postscripts[random(COUNT(postscripts))]);
       break;
     }
 
-    case 6:
-      snprintf(buf, 640, "Find the %s %s in %s. %s them.",
+    case 6:  // Find the [superlative] [type] in [location]. [Verb] them.
+      snprintf(text, 640, "Find the %s %s in %s. %s them.",
         ny_pId2[random(COUNT(ny_pId2))],
         ny_pType[random(COUNT(ny_pType))],
         ny_locA[random(COUNT(ny_locA))],
         ny_v2[random(COUNT(ny_v2))]);
       break;
 
-    case 7: {
-      const char* pid = ny_pId[random(COUNT(ny_pId))];
-      snprintf(buf, 640, "%slook for %s %s %s in %s.",
+    case 7: {  // [time] look for a/an [adjective] [type] in [location].
+      const char* personId = ny_pId[random(COUNT(ny_pId))];
+      snprintf(text, 640, "%slook for %s %s %s in %s.",
         times[random(COUNT(times))],
-        aOrAn(pid), pid,
+        aOrAn(personId), personId,
         ny_pType[random(COUNT(ny_pType))],
         ny_locA[random(COUNT(ny_locA))]);
       break;
     }
 
-    case 8: {
-      const char* pid  = ny_pId[random(COUNT(ny_pId))];
-      const char* mat  = ny_mat[random(COUNT(ny_mat))];
-      const char* act2 = nc_act2[random(COUNT(nc_act2))];
-      char capAct[64]; strncpy(capAct, act2, 63); capAct[63] = '\0';
-      capAct[0] = toupper((unsigned char)capAct[0]);
-      snprintf(buf, 640, "Find %s %s %s wearing %s %s %s at %s. %s",
-        aOrAn(pid), pid,
+    case 8: {  // Find a/an [adjective] [type] wearing a/an [material] [garment] at [location]. [action]
+      const char* personId     = ny_pId[random(COUNT(ny_pId))];
+      const char* material     = ny_mat[random(COUNT(ny_mat))];
+      const char* secondAction = nc_act2[random(COUNT(nc_act2))];
+      char capitalisedSecondAction[64]; strncpy(capitalisedSecondAction, secondAction, 63); capitalisedSecondAction[63] = '\0';
+      capitalisedSecondAction[0] = toupper((unsigned char)capitalisedSecondAction[0]);
+      snprintf(text, 640, "Find %s %s %s wearing %s %s %s at %s. %s",
+        aOrAn(personId), personId,
         ny_pType[random(COUNT(ny_pType))],
-        aOrAn(mat), mat,
+        aOrAn(material), material,
         ny_cloth[random(COUNT(ny_cloth))],
         ny_locA[random(COUNT(ny_locA))],
-        capAct);
+        capitalisedSecondAction);
       break;
     }
 
-    case 9: {
-      const char* act = actions[random(COUNT(actions))];
-      char cap[64]; strncpy(cap, act, 63); cap[63] = '\0';
-      cap[0] = toupper((unsigned char)cap[0]);
-      snprintf(buf, 640, "Bring %s. %s%s.%s",
+    case 9: {  // Bring [object]. [Action] [target]. [postscript]
+      const char* action = actions[random(COUNT(actions))];
+      char capitalisedAction[64]; strncpy(capitalisedAction, action, 63); capitalisedAction[63] = '\0';
+      capitalisedAction[0] = toupper((unsigned char)capitalisedAction[0]);
+      snprintf(text, 640, "Bring %s. %s%s.%s",
         ny_objcs[random(COUNT(ny_objcs))],
-        cap,
+        capitalisedAction,
         targets[random(COUNT(targets))],
         postscripts[random(COUNT(postscripts))]);
       break;
     }
 
-    case 10:
-      snprintf(buf, 640, "Play %s with %s.%s",
+    case 10:  // Play [game] with [target]. [postscript]
+      snprintf(text, 640, "Play %s with %s.%s",
         ny_games[random(COUNT(ny_games))],
         targets[random(COUNT(targets))],
         postscripts[random(COUNT(postscripts))]);
       break;
 
-    case 11:
-      snprintf(buf, 640, "%sspeak about %s with %s.%s",
+    case 11:  // [time] speak about [topic] with [target]. [postscript]
+      snprintf(text, 640, "%sspeak about %s with %s.%s",
         times[random(COUNT(times))],
         ny_topic[random(COUNT(ny_topic))],
         targets[random(COUNT(targets))],
         postscripts[random(COUNT(postscripts))]);
       break;
 
-    case 12:
-      snprintf(buf, 640, "%s%s",
+    case 12:  // [time] [compound action]
+      snprintf(text, 640, "%s%s",
         times[random(COUNT(times))],
         nc_act2[random(COUNT(nc_act2))]);
       break;
 
-    case 13:
-      snprintf(buf, 640, "%s%s%s",
+    case 13:  // [setup phrase], [connector] [compound action]
+      snprintf(text, 640, "%s%s%s",
         nc_act1[random(COUNT(nc_act1))],
         nc_markers[random(COUNT(nc_markers))],
         nc_act2[random(COUNT(nc_act2))]);
       break;
 
-    case 14:
-      snprintf(buf, 640, "%s%s%s",
+    case 14:  // [time] [compound action] [postscript]
+      snprintf(text, 640, "%s%s%s",
         times[random(COUNT(times))],
         nc_act2[random(COUNT(nc_act2))],
         postscripts[random(COUNT(postscripts))]);
       break;
 
-    default:
-      snprintf(buf, 640, "%s%s%s%s",
+    default:  // [setup phrase], [connector] [compound action] [postscript]
+      snprintf(text, 640, "%s%s%s%s",
         nc_act1[random(COUNT(nc_act1))],
         nc_markers[random(COUNT(nc_markers))],
         nc_act2[random(COUNT(nc_act2))],
@@ -999,8 +1199,8 @@ void generatePrescript() {
       break;
   }
 
-  buf[639] = '\0';
-  wrapIntoLines(buf);
+  text[639] = '\0';
+  wrapIntoLines(text);
 
   if (lineCount == 0) {
     strncpy(prescriptLines[0], "...", 63);
@@ -1011,6 +1211,10 @@ void generatePrescript() {
 }
 
 
+/**
+ * @brief Transitions the device to a new display mode and resets frame timing.
+ * @param m The mode to enter.
+ */
 void enterMode(Mode m) {
   mode       = m;
   stateStart = millis();
@@ -1018,19 +1222,33 @@ void enterMode(Mode m) {
   holding    = false;
 }
 
+/**
+ * @brief Generates a new prescript, enters ANIMATING mode, and plays the reveal sound.
+ */
 void nextPrescript() {
   generatePrescript();
   // enterMode first — stateStart has to be set before the sound plays, or frame 0 gets a wrong timestamp
   enterMode(Mode::ANIMATING);
+  uint32_t h0 = ESP.getFreeHeap();
   playRevealSound();
+  uint32_t h1 = ESP.getFreeHeap();
+  Serial.printf("[animating %lu] heap: %u  after_snd: %u  delta_snd: %d\n",
+                (unsigned long)totalClear, h0, h1, (int)h1 - (int)h0);
 }
 
+/**
+ * @brief Displays a temporary message string using the MESSAGE animation state.
+ * @param msg Null-terminated message string (max 63 characters).
+ */
 void showMessage(const char* msg) {
   strncpy(target, msg, 63);
   target[63] = '\0';
   enterMode(Mode::MESSAGE);
 }
 
+/**
+ * @brief Builds and displays the status screen (name, battery, total clears).
+ */
 void showStatus() {
   playRevealSound();
   snprintf(statusLines[0], 64, "_Welcome back,");
@@ -1041,25 +1259,56 @@ void showStatus() {
   enterMode(Mode::STATUS);
 }
 
+/**
+ * @brief Increments the clear counter, plays the clear sound, and enters CLEARING mode.
+ */
 void clearPrescript() {
   totalClear++;
+  uint32_t h0 = ESP.getFreeHeap();
   playClearSound();
+  uint32_t h1 = ESP.getFreeHeap();
+  Serial.printf("[clear %lu] heap: %u  after_snd: %u  delta_snd: %d  stack: %u\n",
+                (unsigned long)totalClear, h0, h1, (int)h1 - (int)h0,
+                (unsigned)uxTaskGetStackHighWaterMark(NULL));
   strncpy(target, "_CLEAR._", 63); target[63] = '\0';
   enterMode(Mode::CLEARING);
 }
 
 
+// ── Arduino Lifecycle ─────────────────────────────────────────────────────────
+
 void setup() {
+  Serial.begin(115200);
+  {
+    esp_reset_reason_t r = esp_reset_reason();
+    const char* s = "unknown";
+    switch (r) {
+      case ESP_RST_POWERON:  s = "power-on";          break;
+      case ESP_RST_SW:       s = "software reset";    break;
+      case ESP_RST_PANIC:    s = "panic/exception";   break;
+      case ESP_RST_INT_WDT:  s = "interrupt watchdog"; break;
+      case ESP_RST_TASK_WDT: s = "task watchdog";     break;
+      case ESP_RST_WDT:      s = "other watchdog";    break;
+      case ESP_RST_BROWNOUT: s = "brownout";          break;
+      case ESP_RST_EXT:      s = "external pin";      break;
+      default: break;
+    }
+    Serial.printf("[boot] reset reason: %s (%d)\n", s, (int)r);
+    Serial.printf("[boot] free heap: %u bytes\n", ESP.getFreeHeap());
+    Serial.printf("[boot] free PSRAM: %u bytes\n", ESP.getFreePsram());
+  }
+
   auto cfg = M5.config();
   M5.begin(cfg);
 
   pinMode(PIN_HOLD, OUTPUT);
   digitalWrite(PIN_HOLD, HIGH);
 
+  // Kill WiFi and Bluetooth — unused here, and leaving them on wastes power.
   WiFi.mode(WIFI_OFF);
   esp_wifi_stop();
   btStop();
-  setCpuFrequencyMhz(80);
+  setCpuFrequencyMhz(80);  // 80 MHz is plenty; saves battery vs the default 240 MHz
 
   M5.Display.setRotation(1);
   M5.Display.setBrightness(BRIGHTNESS);
@@ -1075,7 +1324,8 @@ void setup() {
   loadWav("/index_message_2.wav", &wavClear,   &wavClearSz);
   loadWav("/index_new.png",       &bootImgBuf, &bootImgSz);
 
-  // sync the animation length to the actual sound duration
+  // Sync the animation length to the actual reveal sound duration.
+  // If the WAV is invalid or missing we keep the fallback constants set at the top.
   {
     const uint8_t* pcm; size_t pcmLen; uint32_t sr; uint8_t ch, bps;
     if (wavReveal && parseWavHeader(wavReveal, wavRevealSz, &pcm, &pcmLen, &sr, &ch, &bps)
@@ -1087,6 +1337,16 @@ void setup() {
         ANIM_MS   = soundMs;
       }
     }
+  }
+
+  // Pre-render the boot screen into its own sprite so we never decode the PNG again during the main loop.
+  bootCanvas.createSprite(M5.Display.width(), M5.Display.height());
+  if (bootCanvas.getBuffer()) {
+    drawBootScreen();
+    canvas.pushSprite(&bootCanvas, 0, 0);
+    bootCanvasReady = true;
+    Serial.printf("[boot] boot canvas depth: %d  heap after: %u\n",
+                  (int)bootCanvas.getColorDepth(), ESP.getFreeHeap());
   }
 
   randomSeed((uint32_t)esp_random());
@@ -1118,6 +1378,10 @@ void loop() {
   }
 
   if (mode != Mode::SLEEPING) {
+    // AXP2101 cuts the backlight on every M5 button press — restore it every frame
+    M5.Display.wakeup();
+    M5.Display.setBrightness(BRIGHTNESS);
+
     if (now - lastActivity >= INACTIVITY_MS) {
       strncpy(target, SLEEP_TEXT, 63); target[63] = '\0';
       enterMode(Mode::SLEEPING);
@@ -1159,12 +1423,20 @@ void loop() {
   switch (mode) {
 
     case Mode::BOOT: {
-      if (!holding) { drawBootScreen(); holding = true; }
+      if (!holding) {
+        if (bootCanvasReady) {
+          bootCanvas.pushSprite(0, 0);
+        } else {
+          drawBootScreen();
+        }
+        holding = true;
+      }
       break;
     }
 
     case Mode::ANIMATING: {
       if (now - stateStart >= ANIM_MS) {
+        Serial.printf("[reading   %lu] heap: %u\n", (unsigned long)totalClear, ESP.getFreeHeap());
         enterMode(Mode::READING);
         drawPrescript(prescriptPtrs, lineCount, COL_TEXT);
       } else if (now - lastFrame >= FRAME_MS) {

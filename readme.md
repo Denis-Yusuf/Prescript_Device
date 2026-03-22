@@ -135,3 +135,15 @@ Content sourced from `nyos.dev/prescript.js` and `prescript.neocities.org/prescr
 **The AXP2101 power button fires on speaker activity.** Whenever the speaker changes its power draw, the AXP2101 PMIC generates a spurious power-button interrupt. This is why BtnPWR isn't used for navigation — phantom events would fire on every sound. The firmware handles this by only calling `M5.Speaker.stop()` when the speaker is actually playing, and by restoring display brightness any time a BtnPWR release is detected.
 
 **Animation timing falls back gracefully.** If `index_message_1.wav` is missing or isn't valid PCM, the animation runs on compiled-in defaults: 600 ms spin phase, 3900 ms reveal, 4500 ms total. The sound just won't play.
+
+---
+
+## Developer Notes
+
+**`totalClear` is persisted across sessions.** The counter is saved to NVS (non-volatile storage) via the `Preferences` library when the device shuts down through `powerOff()`. On boot it is restored, so the status screen shows a lifetime total rather than a per-session count.
+
+**Global string arrays are declared `const char* const`.** All word-pool arrays (`singles`, `times`, `actions`, etc.) use `const char* const`, which tells the compiler to place the pointer tables in `.rodata` (read-only flash) rather than `.data` (writable DRAM). This is correct C++ for immutable string tables and also ensures heap corruption cannot silently overwrite the pointers.
+
+**Speaker initialisation allocates ~12 KB of DRAM on first use.** The M5Unified speaker task (I2S DMA ring buffers + FreeRTOS task stack) is allocated the first time a sound is played in a session, not at boot. This is normal and expected; the heap stays stable for the remainder of the session.
+
+**The AXP2101 interrupt caveat.** Any change in speaker power draw causes the AXP2101 PMIC to assert a power-button interrupt. This is why `M5.Speaker.stop()` is guarded by `isPlaying()` — calling stop on a silent speaker still triggers the interrupt, which the firmware misreads as a BtnPWR press and would restore backlight brightness unnecessarily (and could interfere with hold-to-sleep detection).
